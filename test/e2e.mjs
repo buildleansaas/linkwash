@@ -126,6 +126,9 @@ try {
     await resetClipboard();
     await selectAndCopy("plain");
     assert.equal((await readClipboard()).trim(), DIRTY);
+    await resetClipboard();
+    await tab.click("#share-legacy");
+    assert.equal(await readClipboard(), DIRTY);
   });
 
   if (shotsDir) await popup.locator("body").screenshot({ path: path.join(shotsDir, "popup-off.png") });

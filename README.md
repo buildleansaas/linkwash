@@ -12,6 +12,8 @@ It works when you:
 - right-click a link and pick **Copy clean link**
 - press **Alt+Shift+C** (or use the toolbar popup) to copy a clean link to the page you're on
 
+The on/off switch controls the automatic cleaning (the first two). **Copy clean link** and Alt+Shift+C always clean, because that's what you asked for.
+
 Copying from the address bar can't be changed by any extension, which is why the shortcut exists.
 
 ## What it removes
@@ -20,7 +22,7 @@ Not "everything after the `?`". That breaks YouTube (`?v=`), Google (`?q=`) and 
 
 - everywhere: `utm_*`, `fbclid`, `gclid`, `msclkid`, `igsh`, `mc_eid`, `_hsenc`, `ref_src` and about 40 more
 - X / Twitter post links: the whole query (`s`, `t`, `a`)
-- YouTube: everything except `v`, `t`, `list`, `index`
+- YouTube: `si`, `feature`, `pp`, `ab_channel` and other share codes (keeps `v`, `t`, `list`, `lc` and the rest)
 - Amazon product pages: shortened to `amazon.com/dp/ASIN`
 - Spotify, TikTok, Instagram, Reddit, LinkedIn, Facebook, Google, Bing, eBay, AliExpress, Medium, Substack: their share and tracking params
 

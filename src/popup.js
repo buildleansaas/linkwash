@@ -8,7 +8,7 @@ document.getElementById("beer").href = BEER_URL;
 
 function render({ enabled, count: n }) {
   toggle.checked = enabled;
-  status.textContent = enabled ? "On. Links you copy lose their trackers." : "Off. Links copy exactly as they are.";
+  status.textContent = enabled ? "On. Links you copy lose their trackers." : "Off. Links copy as they are. The Copy clean link buttons still clean.";
   document.body.classList.toggle("off", !enabled);
   count.textContent = n.toLocaleString();
   countLabel.textContent = n === 1 ? "link washed" : "links washed";

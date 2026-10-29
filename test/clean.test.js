@@ -43,6 +43,37 @@ test("leaves clean links exactly as they were", () => {
   }
 });
 
+// Links people need: found in review (PR #2). Each must survive exactly.
+test("keeps params that pages need", () => {
+  for (const url of [
+    "https://medium.com/@user/my-story-abc123def456?sk=6a5c1b2d3e4f",
+    "https://www.youtube.com/watch?v=dQw4w9WgXcQ&lc=UgzABCDEF123",
+    "https://www.youtube.com/@mkbhd/search?query=iphone",
+    "https://www.youtube.com/embed/dQw4w9WgXcQ?start=30&autoplay=1",
+    "https://www.amazon.com/gp/search?ie=UTF8&index=books&keywords=harry+potter",
+    "https://example.com/track?trackingId=1Z999AA10123456784",
+    "https://example.com/#pricing",
+    "https://example.com/app#/route?utm_source=x",
+    "https://bucket.s3.amazonaws.com/f.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Signature=abc",
+  ]) {
+    assert.equal(cleanUrl(url), url);
+  }
+});
+
+test("removing a tracker leaves every other byte alone", () => {
+  assert.equal(cleanUrl("https://example.com/search?q=a%20b&utm_source=x"), "https://example.com/search?q=a%20b");
+  assert.equal(cleanUrl("https://example.com/p?amp&utm_source=x"), "https://example.com/p?amp");
+  assert.equal(cleanUrl("https://example.com/p?path=~user/a:b&utm_source=x"), "https://example.com/p?path=~user/a:b");
+  assert.equal(cleanUrl("https://www.youtube.com/watch?v=dQw4w9WgXcQ&lc=Ugz1&si=abc"), "https://www.youtube.com/watch?v=dQw4w9WgXcQ&lc=Ugz1");
+  assert.equal(cleanUrl("https://www.amazon.com/gp/search?keywords=lamp&tag=foo-20"), "https://www.amazon.com/gp/search?keywords=lamp");
+});
+
+test("an anchor next to trackers in the fragment is left alone", () => {
+  assert.equal(cleanUrl("https://example.com/#pricing&utm_source=x"), "https://example.com/#pricing&utm_source=x");
+  assert.equal(cleanUrl("https://example.com/#section?utm_source=x"), "https://example.com/#section?utm_source=x");
+  assert.equal(cleanUrl("https://example.com/p#utm_source=x&ref=7"), "https://example.com/p#ref=7");
+});
+
 test("ignores text that is not a single link", () => {
   for (const text of [
     "hello world",

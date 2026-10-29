@@ -1,5 +1,6 @@
 // Isolated-world content script: owns the on/off setting and does the cleaning.
-let enabled = true;
+// null until the setting loads: nothing is cleaned before we know it's switched on.
+let enabled = null;
 
 chrome.storage.local.get({ enabled: true }, (s) => {
   enabled = s.enabled;
@@ -26,12 +27,13 @@ function selectedText() {
 
 // Ctrl/Cmd+C, Edit > Copy, and sites that copy through a hidden text box.
 window.addEventListener("copy", (e) => {
-  if (!enabled || !e.clipboardData) return;
+  if (enabled !== true || !e.clipboardData) return;
   const text = e.defaultPrevented ? e.clipboardData.getData("text/plain") : selectedText();
   if (!LinkWash.isSingleUrl(text)) return;
   const cleaned = LinkWash.cleanUrl(text);
   if (cleaned === text) return;
-  e.clipboardData.clearData();
+  // If the page wrote its own clipboard data, replace only the plain text and keep its
+  // other formats (rich text, app data). Otherwise write the plain text ourselves.
   e.clipboardData.setData("text/plain", cleaned);
   e.preventDefault();
   countOne();
@@ -41,7 +43,7 @@ window.addEventListener("copy", (e) => {
 document.addEventListener("linkwash:clean", (e) => {
   const text = e.detail;
   let reply = text;
-  if (enabled && typeof text === "string") {
+  if (enabled === true && typeof text === "string") {
     reply = LinkWash.cleanUrl(text);
     if (reply !== text) countOne();
   }

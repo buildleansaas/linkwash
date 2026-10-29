@@ -19,7 +19,8 @@
     return answer ?? text;
   }
 
-  clipboard.writeText = function writeText(text) {
-    return original.call(this, wash(text));
+  clipboard.writeText = function writeText(...args) {
+    if (args.length === 0) return original.apply(this, args);
+    return original.call(this, wash(args[0]));
   };
 })();
