@@ -59,6 +59,17 @@ const pages = {
     </div>
     <img src="${popup}" width="380" style="border-radius:14px;box-shadow:0 20px 50px rgba(15,23,42,.25)">
   </body>`,
+  "promo-marquee": `${base}<body style="width:1400px;height:560px;padding:80px 90px;display:flex;align-items:center;gap:70px;background:linear-gradient(160deg,#0ea5e9,#0369a1);color:#fff">
+    <div style="flex:1">
+      <div style="display:flex;align-items:center;gap:20px;margin-bottom:34px"><img src="${icon}" width="84" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,.25))"><b style="font-size:46px">LinkWash</b></div>
+      <p style="font-size:54px;font-weight:800;line-height:1.08">Copy links without<br>the trackers.</p>
+      <p style="font-size:24px;margin-top:22px;opacity:.92">?s=20, si=, utm_, fbclid: gone. Free and open source.</p>
+    </div>
+    <div style="width:520px;font:500 21px ui-monospace,Menlo,monospace">
+      <div style="background:rgba(255,255,255,.14);border-radius:14px;padding:18px 20px;margin-bottom:16px;word-break:break-all">x.com/someone/status/1849<span style="background:#fee2e2;color:#b91c1c;text-decoration:line-through;border-radius:4px">?s=20&amp;t=Xy7Q</span></div>
+      <div style="background:#fff;color:#0f172a;border-radius:14px;padding:18px 20px">x.com/someone/status/1849 ✓</div>
+    </div>
+  </body>`,
   "promo-small": `${base}<body style="width:440px;height:280px;padding:34px;background:linear-gradient(160deg,#0ea5e9,#0284c7);color:#fff">
     <div style="display:flex;align-items:center;gap:14px"><img src="${icon}" width="56" style="filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))"><b style="font-size:32px">LinkWash</b></div>
     <p style="font-size:27px;font-weight:700;line-height:1.2;margin-top:26px">Copy links without the trackers.</p>
@@ -69,7 +80,7 @@ const pages = {
 const browser = await chromium.launch();
 const page = await browser.newPage();
 for (const [name, html] of Object.entries(pages)) {
-  const [w, h] = name === "promo-small" ? [440, 280] : [1280, 800];
+  const [w, h] = { "promo-small": [440, 280], "promo-marquee": [1400, 560] }[name] ?? [1280, 800];
   await page.setViewportSize({ width: w, height: h });
   await page.setContent(html);
   await page.screenshot({ path: path.join(root, "store", `${name}.png`) });
