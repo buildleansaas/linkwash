@@ -35,6 +35,13 @@ window.addEventListener("copy", (e) => {
   // If the page wrote its own clipboard data, replace only the plain text and keep its
   // other formats (rich text, app data). Otherwise write the plain text ourselves.
   e.clipboardData.setData("text/plain", cleaned);
+  // A page's rich-text copy of the same link gets the clean link too (pasting into Gmail or Docs).
+  const html = e.defaultPrevented ? e.clipboardData.getData("text/html") : "";
+  if (html) {
+    const dirty = text.trim();
+    const escaped = dirty.replace(/&/g, "&amp;");
+    e.clipboardData.setData("text/html", html.split(escaped).join(cleaned.replace(/&/g, "&amp;")).split(dirty).join(cleaned));
+  }
   e.preventDefault();
   countOne();
 });

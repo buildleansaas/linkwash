@@ -20,6 +20,7 @@ const page = `<!doctype html><meta charset="utf-8"><title>Share test</title>
 <button id="share" onclick="navigator.clipboard.writeText(document.getElementById('plain').textContent)">Copy link</button>
 <button id="share-legacy" onclick="(()=>{const t=document.createElement('textarea');t.value=document.getElementById('plain').textContent;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()})()">Copy link (old way)</button>
 <p id="mixed">Read this: ${DIRTY}</p>
+<button id="rich" onclick="(()=>{const u=document.getElementById('plain').textContent;const h=(e)=>{e.clipboardData.setData('text/plain',u);e.clipboardData.setData('text/html','<a href=&quot;'+u.replace(/&/g,'&amp;')+'&quot;>post</a>');e.preventDefault()};document.addEventListener('copy',h,{once:true});document.execCommand('copy')})()">Copy rich link</button>
 </body>`;
 
 const server = http.createServer((_req, res) => {
@@ -89,6 +90,18 @@ try {
     assert.equal((await readClipboard()).trim(), CLEAN);
   });
 
+  await check("a site's rich-text copy of the link is cleaned too", async () => {
+    await resetClipboard();
+    await tab.click("#rich");
+    assert.equal(await readClipboard(), CLEAN);
+    const html = await tab.evaluate(async () => {
+      const [item] = await navigator.clipboard.read();
+      return item.types.includes("text/html") ? (await item.getType("text/html")).text() : "";
+    });
+    assert.ok(html.includes(`href="${CLEAN}"`), html);
+    assert.ok(!html.includes("s=20"), html);
+  });
+
   await check("a sentence with a link in it is left alone", async () => {
     await resetClipboard();
     await selectAndCopy("mixed");
@@ -109,7 +122,7 @@ try {
 
   await check("popup counts washed links", async () => {
     await popup.waitForFunction(() => document.getElementById("count").textContent !== "0");
-    assert.equal(await popup.textContent("#count"), "4");
+    assert.equal(await popup.textContent("#count"), "5");
   });
 
   if (shotsDir) {

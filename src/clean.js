@@ -19,7 +19,7 @@ const LinkWash = (() => {
   const SITES = [
     { hosts: ["x.com", "twitter.com"], keep: [] , paths: /^\/[^/]+\/status\// },
     { hosts: ["x.com", "twitter.com"], strip: ["s", "t", "a"] },
-    { hosts: ["youtube.com", "youtu.be"], strip: ["si", "feature", "pp", "ab_channel", "embeds_referring_euri", "embeds_referring_origin", "source_ve_path", "kw", "app"] },
+    { hosts: ["youtube.com", "youtu.be"], strip: ["si", "feature", "pp", "ab_channel", "embeds_referring_euri", "embeds_referring_origin", "embeds_euri", "embeds_origin", "source_ve_path", "kw", "app"] },
     { hosts: ["open.spotify.com"], strip: ["si", "nd", "dl_branch", "_branch_match_id", "_branch_referrer"] },
     { hosts: ["music.apple.com", "podcasts.apple.com"], strip: ["ls", "uo", "at", "ct", "itsct", "itscg"] },
     { hosts: ["instagram.com"], strip: ["img_index_utm", "ig_rid", "ig_mid"] },
@@ -68,7 +68,8 @@ const LinkWash = (() => {
     if (AMAZON_HOST.test(host)) {
       const m = url.pathname.match(AMAZON_PRODUCT);
       if (m) {
-        const clean = `${url.protocol}//${url.host}/dp/${m[1].toUpperCase()}${url.hash}`;
+        const hashAt = raw.indexOf("#");
+        const clean = `${url.protocol}//${url.host}/dp/${m[1].toUpperCase()}${hashAt === -1 ? "" : raw.slice(hashAt)}`;
         return clean === raw ? input : clean;
       }
     }
@@ -99,10 +100,11 @@ const LinkWash = (() => {
     let newQuery = query;
     if (query !== null) {
       const parts = query.split("&");
-      const kept = parts.filter((part) => part !== "" && !drop(paramName(part)));
+      // Empty segments (a=1&&b=2, a trailing &) are kept as they are: only real params can be trackers.
+      const kept = parts.filter((part) => part === "" || !drop(paramName(part)));
       if (kept.length !== parts.length) {
         changed = true;
-        newQuery = kept.join("&");
+        newQuery = kept.every((part) => part === "") ? "" : kept.join("&");
       }
     }
 

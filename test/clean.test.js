@@ -68,6 +68,17 @@ test("removing a tracker leaves every other byte alone", () => {
   assert.equal(cleanUrl("https://www.amazon.com/gp/search?keywords=lamp&tag=foo-20"), "https://www.amazon.com/gp/search?keywords=lamp");
 });
 
+test("a link with no tracker is returned as it was, empty segments and all", () => {
+  for (const url of ["https://a.com/p?a=1&&b=2", "https://a.com/p?a=1&", "https://a.com/p?", "https://a.com/p?#x"]) {
+    assert.equal(cleanUrl(url), url);
+  }
+  assert.equal(cleanUrl("https://a.com/p?a=1&&utm_source=x"), "https://a.com/p?a=1&");
+});
+
+test("Amazon product rewrite keeps the fragment bytes", () => {
+  assert.equal(cleanUrl("https://www.amazon.com/Thing/dp/B000123456/ref=x#ü"), "https://www.amazon.com/dp/B000123456#ü");
+});
+
 test("an anchor next to trackers in the fragment is left alone", () => {
   assert.equal(cleanUrl("https://example.com/#pricing&utm_source=x"), "https://example.com/#pricing&utm_source=x");
   assert.equal(cleanUrl("https://example.com/#section?utm_source=x"), "https://example.com/#section?utm_source=x");
