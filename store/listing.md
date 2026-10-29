@@ -4,8 +4,8 @@
 **Category:** Tools (Productivity: Tools)
 **Language:** English
 
-## Summary (132 chars max)
-Strips tracking junk (?s=20, si=, utm_, fbclid) from links when you copy them. Works on share buttons too. Nothing leaves your browser.
+## Summary (132 chars max; same as the manifest description)
+Strips tracking junk (?s=20, si=, utm_, fbclid) from links you copy, share buttons included. Nothing leaves your browser.
 
 ## Description
 Copy a link, paste a clean link.
