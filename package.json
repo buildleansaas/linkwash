@@ -11,6 +11,6 @@
     "zip": "node scripts/zip.mjs"
   },
   "devDependencies": {
-    "playwright": "1.56.1"
+    "playwright": "1.64.0"
   }
 }

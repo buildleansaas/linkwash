@@ -3,6 +3,5 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   const box = document.getElementById("buffer");
   box.value = msg.text;
   box.select();
-  document.execCommand("copy");
-  sendResponse(true);
+  sendResponse(document.execCommand("copy"));
 });

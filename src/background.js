@@ -44,7 +44,8 @@ async function writeClipboard(text) {
       justification: "Write the cleaned link to the clipboard.",
     });
   }
-  await chrome.runtime.sendMessage({ type: "offscreen-copy", text });
+  const ok = await chrome.runtime.sendMessage({ type: "offscreen-copy", text });
+  if (!ok) throw new Error("clipboard write failed");
 }
 
 function flashBadge() {

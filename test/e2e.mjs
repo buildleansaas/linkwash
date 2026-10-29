@@ -32,7 +32,7 @@ const origin = `http://127.0.0.1:${server.address().port}`;
 const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "linkwash-e2e-"));
 const context = await chromium.launchPersistentContext(userDataDir, {
   channel: "chromium",
-  headless: true,
+  headless: !process.env.HEADED,
   permissions: ["clipboard-read", "clipboard-write"],
   args: [`--disable-extensions-except=${root}`, `--load-extension=${root}`],
 });
@@ -95,18 +95,26 @@ try {
     assert.equal((await readClipboard()).trim(), `Read this: ${DIRTY}`);
   });
 
+  await check("right-click menu and shortcut path (offscreen copy) copies the clean link", async () => {
+    await resetClipboard();
+    const result = await worker.evaluate((url) => copyClean(url), DIRTY);
+    assert.equal(result, CLEAN);
+    await tab.bringToFront();
+    assert.equal(await readClipboard(), CLEAN);
+  });
+
   const popup = await context.newPage();
   await popup.setViewportSize({ width: 320, height: 330 });
   await popup.goto(`chrome-extension://${extId}/src/popup.html`);
 
   await check("popup counts washed links", async () => {
     await popup.waitForFunction(() => document.getElementById("count").textContent !== "0");
-    assert.equal(await popup.textContent("#count"), "3");
+    assert.equal(await popup.textContent("#count"), "4");
   });
 
   if (shotsDir) {
     fs.mkdirSync(shotsDir, { recursive: true });
-    await popup.screenshot({ path: path.join(shotsDir, "popup-on.png") });
+    await popup.locator("body").screenshot({ path: path.join(shotsDir, "popup-on.png") });
   }
 
   await check("turning it off copies links exactly as they are", async () => {
@@ -120,7 +128,7 @@ try {
     assert.equal((await readClipboard()).trim(), DIRTY);
   });
 
-  if (shotsDir) await popup.screenshot({ path: path.join(shotsDir, "popup-off.png") });
+  if (shotsDir) await popup.locator("body").screenshot({ path: path.join(shotsDir, "popup-off.png") });
 
   await check("turning it back on cleans again", async () => {
     await popup.click(".switch span");

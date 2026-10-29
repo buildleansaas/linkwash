@@ -36,6 +36,7 @@ Free forever. If it saves you some hassle, buy me a beer: https://donate.stripe.
 - storage: remembers whether LinkWash is turned on and how many links it has cleaned, on this device only.
 - contextMenus: adds "Copy clean link" to the right-click menu.
 - offscreen: the right-click and keyboard-shortcut copies need a hidden page to write to the clipboard, because the background service worker has no clipboard.
+- clipboardWrite: puts the cleaned link on the clipboard when you use the right-click menu, the keyboard shortcut or the popup button.
 - activeTab: reads the current tab's address only when you press the shortcut or use the popup, to copy a clean link to that page.
 - Host permission (all sites): share buttons and copied links exist on every site. The content script only looks at copied text, only at the moment you copy, and only changes it when it is a single link with tracking parameters.
 
