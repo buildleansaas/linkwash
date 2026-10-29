@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "LinkWash: Copy Links Without Trackers",
+  "short_name": "LinkWash",
+  "version": "1.0.0",
+  "description": "Strips tracking junk (?s=20, si=, utm_, fbclid) from links when you copy them. Works on share buttons too. Nothing leaves your browser.",
+  "icons": { "16": "icons/16.png", "32": "icons/32.png", "48": "icons/48.png", "128": "icons/128.png" },
+  "action": { "default_popup": "src/popup.html", "default_title": "LinkWash" },
+  "background": { "service_worker": "src/background.js" },
+  "permissions": ["storage", "contextMenus", "offscreen", "activeTab"],
+  "commands": {
+    "copy-clean-page-link": {
+      "suggested_key": { "default": "Alt+Shift+C" },
+      "description": "Copy a clean link to this page"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/clean.js", "src/content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/page-hook.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "MAIN"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <img src="../icons/48.png" width="28" height="28" alt="">
+    <h1>LinkWash</h1>
+    <label class="switch" title="Turn LinkWash on or off">
+      <input type="checkbox" id="enabled" checked>
+      <span></span>
+    </label>
+  </header>
+  <p id="status" class="status">On. Links you copy lose their trackers.</p>
+
+  <button id="copy-page" class="primary">Copy clean link to this page</button>
+  <p id="copied" class="copied" hidden></p>
+
+  <div class="count"><strong id="count">0</strong> <span id="count-label">links washed</span></div>
+
+  <p class="hint">Shortcut: <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd>. Or right-click any link → <em>Copy clean link</em>.</p>
+
+  <footer>
+    <a id="beer" href="#" target="_blank" rel="noopener">🍺 Buy me a beer</a>
+    <a href="https://github.com/buildleansaas/linkwash" target="_blank" rel="noopener">Source</a>
+    <a href="https://vibehowto.com/projects/linkwash" target="_blank" rel="noopener">How it works</a>
+  </footer>
+  <script src="clean.js"></script>
+  <script src="config.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
